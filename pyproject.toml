@@ -10,10 +10,7 @@ dependencies = ["anywidget", "requests"]
 readme = "README.md"
 
 [project.optional-dependencies]
-dev = ["watchfiles", "jupyterlab", "ruff", "pytest"]
-
-[pytest]
-nb_test_files = true
+dev = ["watchfiles", "jupyterlab", "ruff", "pytest", "pytest-ipywidgets", "pytest-playwright", "playwright"]
 
 [tool.hatch.envs.default]
 features = ["dev"]
@@ -38,7 +35,7 @@ build_cmd = "build"
 [tool.hatch.envs.default.scripts]
 lint = ["ruff check . {args:.}", "ruff format . --check --diff {args:.}"]
 format = ["ruff format . {args:.}", "ruff check . --fix {args:.}"]
-test = ["pytest {args:.}"]
+test = ["pytest -v {args:.}"]
 
 [tool.ruff.lint]
 pydocstyle = { convention = "numpy" }
