@@ -1,7 +1,7 @@
 node_modules
 .venv
 dist
-images
+/src/ipyniivue/images/
 docs/build
 package-lock.json
 
