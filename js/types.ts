@@ -90,9 +90,17 @@ export type VolumeModel = AnyModel<{
 	n_frame_4d: number | null;
 	modulation_image: number | null;
 	modulate_alpha: number;
+	img2ras_step: number[];
+	img2ras_start: number[];
+	dims_ras: number[];
+	global_min: number;
+	global_max: number;
 
 	hdr: Partial<NIFTI1>;
-	img: DataView;
+	img: {
+		type: string;
+		data: DataView;
+	};
 	dims: number[];
 }>;
 

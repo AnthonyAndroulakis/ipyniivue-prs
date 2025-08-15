@@ -43,6 +43,8 @@ def serialize_file(instance: typing.Union[pathlib.Path, str], widget: object):
     if isinstance(instance, str):
         if instance == "<fromfrontend>":
             return {"name": "<fromfrontend>", "data": b""}
+        elif instance == "<fromimg>":
+            return {"name": "<fromimg>", "data": b""}
         # Make sure we have a pathlib.Path instance
         instance = pathlib.Path(instance)
     return {"name": instance.name, "data": instance.read_bytes()}

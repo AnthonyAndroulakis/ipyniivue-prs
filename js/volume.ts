@@ -9,6 +9,8 @@ import type {
 
 import type { NIFTI1, NIFTI2 } from "nifti-reader-js";
 
+import { v4 as uuidv4 } from "@lukeed/uuid";
+
 function getNIFTIData(hdr: NIFTI1 | NIFTI2): Partial<NIFTI1> {
 	const data: Partial<NIFTI1> = {
 		littleEndian: hdr.littleEndian,
@@ -196,6 +198,7 @@ async function create_volume(
 
 	// Input data
 	const fromFrontend = vmodel.get("path").name === "<fromfrontend>";
+	const fromImg = vmodel.get("path").name === "<fromimg>";
 
 	const path = vmodel.get("path").name ? vmodel.get("path") : null;
 	const url = vmodel.get("url");
@@ -220,6 +223,27 @@ async function create_volume(
 	if (fromFrontend) {
 		const idx = nv.getVolumeIndexByID(vmodel.get("id"));
 		volume = nv.volumes[idx];
+	} else if (fromImg) {
+		volume = new niivue.NVImage();
+		volume.name = vmodel.get("name");
+		volume.id = uuidv4();
+		volume.hdr = Object.assign({}, vmodel.get("hdr") as NIFTI1);
+
+		const payload = {
+			type: "buffer_change",
+			data: {
+				attr: "img",
+				type: vmodel.get("img").type,
+			},
+		};
+		const buffers = [vmodel.get("img").data];
+
+		lib.handleBufferMsg(volume, payload as TypedBufferPayload, buffers, () =>
+			nv.updateGLVolume(),
+		);
+
+		volume.calculateRAS();
+		volume.calMinMax();
 	} else if (path || data) {
 		const dataBuffer = path?.data?.buffer || data?.buffer;
 		const name = path?.name || vmodel.get("name");
@@ -282,6 +306,21 @@ async function create_volume(
 	}
 	if (typeof volume.cal_max !== "undefined") {
 		vmodel.set("cal_max", volume.cal_max);
+	}
+	if (volume.img2RASstep) {
+		vmodel.set("img2ras_step", volume.img2RASstep);
+	}
+	if (volume.img2RASstart) {
+		vmodel.set("img2ras_start", volume.img2RASstart);
+	}
+	if (volume.dimsRAS) {
+		vmodel.set("dims_ras", volume.dimsRAS);
+	}
+	if (typeof volume.global_min !== "undefined") {
+		vmodel.set("global_min", volume.global_min);
+	}
+	if (typeof volume.global_max !== "undefined") {
+		vmodel.set("global_max", volume.global_max);
 	}
 	if (volume.hdr !== null) {
 		vmodel.set("hdr", getNIFTIData(volume.hdr));

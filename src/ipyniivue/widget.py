@@ -47,8 +47,10 @@ from .traits import (
 )
 from .utils import (
     ChunkedDataHandler,
+    get_volume_data,
     make_draw_lut,
     make_label_lut,
+    set_volume_data,
 )
 
 __all__ = ["NiiVue"]
@@ -464,6 +466,11 @@ class Volume(BaseAnyWidget):
     n_frame_4d = t.Int(None, allow_none=True).tag(sync=True)  # readonly after set
     modulation_image = t.Int(None, allow_none=True).tag(sync=True)
     modulate_alpha = t.Int(0).tag(sync=True)
+    img2ras_step = t.List(None, allow_none=True).tag(sync=True)
+    img2ras_start = t.List(None, allow_none=True).tag(sync=True)
+    dims_ras = t.List(None, allow_none=True).tag(sync=True)
+    global_min = t.Float(None, allow_none=True).tag(sync=True)
+    global_max = t.Float(None, allow_none=True).tag(sync=True)
 
     # Set after bidirectional comms with frontend
     hdr = t.Instance(NIFTI1Hdr, allow_none=True).tag(
@@ -531,7 +538,11 @@ class Volume(BaseAnyWidget):
     def get_state(self, key=None, drop_defaults=False):
         """Exclude certain attributes from state on save."""
         state = super().get_state(key=key, drop_defaults=drop_defaults)
-        if (self.path and self.path != "<fromfrontend>") or self.url or self.data:
+        if (
+            (self.path and self.path not in ("<fromfrontend>", "<fromimg>"))
+            or self.url
+            or self.data
+        ):
             if "img" in state:
                 del state["img"]
         return state
@@ -641,6 +652,52 @@ class Volume(BaseAnyWidget):
             The filename (default: "image.nii").
         """
         self.send({"type": "save_to_disk", "data": [filename]})
+
+    def clone(self):
+        """Make a clone of this Volume instance and return a new Volume.
+
+        Returns
+        -------
+        Volume
+            A new Volume instance with a new id, and copied hdr and img.
+
+        Raises
+        ------
+        ValueError
+            If hdr or img are not defined.
+        """
+        if self.hdr is None or self.img is None:
+            raise ValueError("Cannot clone Volume: hdr and img must be defined.")
+
+        # id will get set by frontend after getting added on
+        cloned_volume = Volume(path="<fromimg>", name=self.name)
+
+        # copy header
+        hdr_state = serialize_hdr(self.hdr, None)
+        cloned_hdr = NIFTI1Hdr(**hdr_state)
+        cloned_volume.hdr = cloned_hdr
+
+        # copy img
+        cloned_volume.img = self.img.copy()
+
+        # copy values set by calculateRAS()
+        cloned_volume.dims_ras = self.dims_ras
+        cloned_volume.img2ras_step = self.img2ras_step
+        cloned_volume.img2ras_start = self.img2ras_start
+
+        # copy values set by calMinMax()
+        cloned_volume.cal_min = self.cal_min
+        cloned_volume.cal_max = self.cal_max
+        cloned_volume.global_min = self.global_min
+        cloned_volume.global_max = self.global_max
+
+        return cloned_volume
+
+    def get_volume_data(self, vox_start, vox_end):
+        return get_volume_data(self, vox_start, vox_end)
+
+    def set_volume_data(self, vox_start, vox_end, slab_data):
+        set_volume_data(self, vox_start, vox_end, slab_data)
 
 
 class NiiVue(BaseAnyWidget):
@@ -996,6 +1053,28 @@ class NiiVue(BaseAnyWidget):
             return
         self.volumes = [*self.volumes, new_volume]
 
+    def remove_volume(self, volume_id: str):
+        """
+        Remove a volume from this NiiVue instance by its unique ID.
+
+        Parameters
+        ----------
+        volume_id : str
+            The ID of the volume you want to remove.
+
+        Raises
+        ------
+        ValueError
+            If no volume with the specified ID is found.
+        """
+        idx = self.get_volume_index_by_id(volume_id)
+        if idx == -1:
+            raise ValueError(f"No volume with ID '{volume_id}' found")
+
+        current_volumes = list(self.volumes)
+        current_volumes.pop(idx)
+        self.volumes = current_volumes
+
     def load_meshes(self, meshes: list):
         """
         Load a list of meshes objects.
@@ -1053,6 +1132,28 @@ class NiiVue(BaseAnyWidget):
         else:
             return
         self.meshes = [*self.meshes, new_mesh]
+
+    def remove_mesh(self, mesh_id: str):
+        """
+        Remove a mesh from this NiiVue instance by its unique ID.
+
+        Parameters
+        ----------
+        mesh_id : str
+            The ID of the mesh you want to remove.
+
+        Raises
+        ------
+        ValueError
+            If no mesh with the specified ID is found.
+        """
+        idx = self.get_mesh_index_by_id(mesh_id)
+        if idx == -1:
+            raise ValueError(f"No mesh with ID '{mesh_id}' found")
+
+        current_meshes = list(self.meshes)
+        current_meshes.pop(idx)
+        self.meshes = current_meshes
 
     """
     Other functions

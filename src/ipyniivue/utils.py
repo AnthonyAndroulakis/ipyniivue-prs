@@ -321,3 +321,228 @@ def find_otsu(volume, mlevel=2):
         thresholds.extend([float("inf")] * missing)
 
     return thresholds
+
+
+def get_volume_data(nv_image, vox_start_ras=None, vox_end_ras=None, data_type="same"):
+    """
+    Read a 3D slab of voxels from a volume specified in RAS coordinates.
+
+    Parameters
+    ----------
+    nv_image: NVImage
+        NVImage instance
+    vox_start_ras: list
+        list of numbers, start RAS coordinate (0-indexed)
+    vox_end_ras: list
+        list of numbers, end RAS coordinate (0-indexed)
+    data_type: str
+        output array type: 'same', 'uint8', 'int16', 'uint16',
+                   'float32', 'scaled', 'normalized', 'windowed', 'float64'
+
+    Returns
+    -------
+    output_img: np.array
+        NumPy array of the extracted voxel data
+    slab_dims: list
+        list of slab dimensions [sx, sy, sz]
+    """
+    required_attrs = ["hdr", "img", "dims_ras", "img2ras_step", "img2ras_start"]
+    if not all(
+        hasattr(nv_image, attr) and getattr(nv_image, attr) is not None
+        for attr in required_attrs
+    ):
+        raise RuntimeError(
+            "get_volume_data: Missing required NVImage properties "
+            "(hdr, img, dims_ras, img2ras_step/start)."
+        )
+
+    if vox_start_ras is None:
+        vox_start_ras = [-1, 0, 0]
+    else:
+        vox_start_ras = vox_start_ras[:3]
+    if vox_end_ras is None:
+        vox_end_ras = [0, 0, 0]
+    else:
+        vox_end_ras = vox_end_ras[:3]
+
+    if min(vox_start_ras) < 0 or min(vox_end_ras) < 0:
+        raise RuntimeError(
+            "get_volume_data: Invalid start or end coordinates provided."
+        )
+
+    dims_ras = nv_image.dims_ras[1:4]
+
+    for i in range(3):
+        vox_start_ras[i] = max(0, min(round(vox_start_ras[i]), dims_ras[i] - 1))
+        vox_end_ras[i] = max(0, min(round(vox_end_ras[i]), dims_ras[i] - 1))
+        if vox_end_ras[i] < vox_start_ras[i]:
+            tmp = vox_end_ras[i]
+            vox_end_ras[i] = vox_start_ras[i]
+            vox_start_ras[i] = tmp
+
+    slab_dims = [
+        vox_end_ras[0] - vox_start_ras[0] + 1,
+        vox_end_ras[1] - vox_start_ras[1] + 1,
+        vox_end_ras[2] - vox_start_ras[2] + 1,
+    ]
+    slab_nvox = slab_dims[0] * slab_dims[1] * slab_dims[2]
+
+    if slab_nvox <= 0:
+        raise RuntimeError("get_volume_data: Calculated slab size is zero or negative.")
+
+    if data_type == "uint8":
+        output_dtype = np.uint8
+    elif data_type == "int16":
+        output_dtype = np.int16
+    elif data_type == "uint16":
+        output_dtype = np.uint16
+    elif data_type in ["float32", "scaled", "normalized", "windowed"]:
+        output_dtype = np.float32
+    elif data_type == "float64":
+        output_dtype = np.float64
+    elif data_type == "same":
+        output_dtype = nv_image.img.dtype
+    else:
+        output_dtype = nv_image.img.dtype
+
+    try:
+        output_img = np.empty(slab_nvox, dtype=output_dtype)
+    except Exception as e:
+        raise RuntimeError(
+            "get_volume_data: Failed to create output array "
+            f"for data_type '{data_type}'. Error: {e}"
+        ) from e
+
+    step = nv_image.img2ras_step
+    start = nv_image.img2ras_start
+    source_img = nv_image.img
+
+    output_index = 0
+    for rz in range(vox_start_ras[2], vox_end_ras[2] + 1):
+        zi = start[2] + rz * step[2]
+        for ry in range(vox_start_ras[1], vox_end_ras[1] + 1):
+            yi = start[1] + ry * step[1]
+            for rx in range(vox_start_ras[0], vox_end_ras[0] + 1):
+                xi = start[0] + rx * step[0]
+                native_index = int(xi + yi + zi)
+
+                value = 0
+                if 0 <= native_index < source_img.size:
+                    value = source_img[native_index]
+                output_img[output_index] = value
+                output_index += 1
+
+    slope = (
+        nv_image.hdr.scl_slope
+        if not (math.isnan(nv_image.hdr.scl_slope) or nv_image.hdr.scl_slope == 0)
+        else 1.0
+    )
+    inter = nv_image.hdr.scl_inter if not math.isnan(nv_image.hdr.scl_inter) else 0.0
+
+    if data_type in ["scaled", "normalized", "windowed"]:
+        if output_img.dtype != np.float32:
+            output_img = output_img.astype(np.float32)
+
+        output_img = output_img * slope + inter
+
+    if data_type in ["normalized", "windowed"]:
+        if data_type == "normalized":
+            min_val = nv_image.global_min
+            max_val = nv_image.global_max
+        else:
+            min_val = nv_image.cal_min
+            max_val = nv_image.cal_max
+
+        range_val = max_val - min_val
+        scale = 0 if range_val == 0 else 1 / range_val
+
+        output_img = (output_img - min_val) * scale
+        output_img = np.clip(output_img, 0, 1)
+
+    return output_img, slab_dims
+
+
+def set_volume_data(nv_image, vox_start_ras=None, vox_end_ras=None, slab_data=None):
+    """
+    Write a 3D slab of voxels into a volume, specified in RAS coordinates.
+
+    Parameters
+    ----------
+    nv_image: NVImage
+        NVImage instance to modify
+    vox_start_ras: list
+        list of numbers, start RAS coordinate (0-indexed)
+    vox_end_ras: list
+        list of numbers, end RAS coordinate (0-indexed)
+    slab_data: np.array
+        NumPy array of voxel values matching slab dimensions
+    """
+    required_attrs = ["hdr", "img", "dims_ras", "img2ras_step", "img2ras_start"]
+    if not all(
+        hasattr(nv_image, attr) and getattr(nv_image, attr) is not None
+        for attr in required_attrs
+    ):
+        raise RuntimeError(
+            "set_volume_data: Missing required NVImage properties "
+            "(hdr, img, dims_ras, img2ras_step/start)."
+        )
+
+    if slab_data is None or len(slab_data) < 1:
+        raise RuntimeError("set_volume_data: Input slab_data is empty.")
+
+    if vox_start_ras is None:
+        vox_start_ras = [-1, 0, 0]
+    else:
+        vox_start_ras = vox_start_ras[:3]
+    if vox_end_ras is None:
+        vox_end_ras = [0, 0, 0]
+    else:
+        vox_end_ras = vox_end_ras[:3]
+
+    if min(vox_start_ras) < 0 or min(vox_end_ras) < 0:
+        raise RuntimeError(
+            "set_volume_data: Invalid start or end coordinates provided."
+        )
+
+    dims_ras = nv_image.dims_ras[1:4]
+
+    for i in range(3):
+        vox_start_ras[i] = max(0, min(round(vox_start_ras[i]), dims_ras[i] - 1))
+        vox_end_ras[i] = max(0, min(round(vox_end_ras[i]), dims_ras[i] - 1))
+        if vox_end_ras[i] < vox_start_ras[i]:
+            tmp = vox_end_ras[i]
+            vox_end_ras[i] = vox_start_ras[i]
+            vox_start_ras[i] = tmp
+
+    slab_dims = [
+        vox_end_ras[0] - vox_start_ras[0] + 1,
+        vox_end_ras[1] - vox_start_ras[1] + 1,
+        vox_end_ras[2] - vox_start_ras[2] + 1,
+    ]
+    slab_nvox = slab_dims[0] * slab_dims[1] * slab_dims[2]
+
+    if slab_nvox <= 0:
+        raise RuntimeError("set_volume_data: Calculated slab size is zero or negative.")
+
+    if len(slab_data) < slab_nvox:
+        raise RuntimeError(
+            f"set_volume_data: Input slab_data length ({len(slab_data)}) "
+            f"is less than the calculated slab size ({slab_nvox})."
+        )
+
+    step = nv_image.img2ras_step
+    start = nv_image.img2ras_start
+    target_img = nv_image.img
+
+    source_index = 0
+    for rz in range(int(vox_start_ras[2]), int(vox_end_ras[2]) + 1):
+        zi = start[2] + rz * step[2]
+        for ry in range(int(vox_start_ras[1]), int(vox_end_ras[1]) + 1):
+            yi = start[1] + ry * step[1]
+            for rx in range(int(vox_start_ras[0]), int(vox_end_ras[0]) + 1):
+                xi = start[0] + rx * step[0]
+                native_index = int(xi + yi + zi)
+
+                if 0 <= native_index < target_img.size:
+                    target_img.flat[native_index] = slab_data[source_index]
+                source_index += 1
