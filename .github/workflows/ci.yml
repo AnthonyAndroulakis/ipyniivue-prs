@@ -90,6 +90,7 @@ jobs:
           pytest --nbmake examples/*ipynb -n auto --cov=src --cov-report=json:./reports/coverage.json --cov-report=xml:./reports/coverage.xml
       - name: Run main tests
         run: |
+          pip install playwright
           hatch run test --headless
       - name: Upload ipyniivue example notbooks coverage report
         uses: actions/upload-artifact@v4
