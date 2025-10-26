@@ -792,6 +792,13 @@ export default {
 		const disposer = new lib.Disposer();
 
 		if (!nv.canvas?.parentNode) {
+			if (process.env.NODE_ENV === "development") {
+				// biome-ignore lint/suspicious/noExplicitAny: for testing purposes
+				(window as any).nvTestInstances = (window as any).nvTestInstances || {};
+				// biome-ignore lint/suspicious/noExplicitAny: for testing purposes
+				(window as any).nvTestInstances[model.get("this_model_id")] = nv;
+			}
+
 			console.log("drawing first render");
 
 			// Create a container div and set its height

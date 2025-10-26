@@ -91,6 +91,9 @@ async function build(isWatchMode) {
 		plugins: [generateColormapsPlugin, generateShaderNamesPlugin],
 		format: "esm",
 		minify: true,
+		define: {
+			"process.env.NODE_ENV": isWatchMode ? '"development"' : '"production"',
+		},
 	};
 
 	if (isWatchMode) {
