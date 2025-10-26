@@ -64,6 +64,7 @@ jobs:
         run: |
           pip install pytest-cov
           pip install playwright
+          pip install jupyterlab
           pip install --upgrade pip ipython ipykernel
           ipython kernel install --name "python3" --user
           mkdir -p ./reports
