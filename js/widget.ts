@@ -18,7 +18,7 @@ import type {
 } from "./types.ts";
 
 let nv: niivue.Niivue;
-let syncInterval: number | undefined;
+let syncInterval: ReturnType<typeof setInterval> | undefined;
 
 async function sendDrawBitmap(nv: niivue.Niivue, model: Model) {
 	const thisModelId = model.get("this_model_id");
