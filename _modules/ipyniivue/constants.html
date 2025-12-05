@@ -1,15 +1,14 @@
 <!doctype html>
-<html class="no-js" lang="en" data-content_root="./">
-  <head>
-<meta charset="utf-8">
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="#">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
-<meta name="robots" content="noindex" />
-<title>Search - IPyNiiVue 2.1.0 documentation</title><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+        <title>ipyniivue.constants - IPyNiiVue 2.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
 
@@ -161,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">IPyNiiVue 2.1.0 documentation</div></a>
+      <a href="../../index.html"><div class="brand">IPyNiiVue 2.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -180,11 +179,11 @@
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   <span class="sidebar-brand-text">IPyNiiVue 2.1.0 documentation</span>
   
-</a><form class="sidebar-search-container" method="get" action="#" role="search">
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
@@ -192,13 +191,13 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="options.html">Options</a></li>
-<li class="toctree-l1"><a class="reference internal" href="traits.html">Traits</a></li>
-<li class="toctree-l1"><a class="reference internal" href="enums.html">Enums</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../options.html">Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../traits.html">Traits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../enums.html">Enums</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
 </ul>
 
 </div>
@@ -231,18 +230,201 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          
-<noscript>
-<div class="admonition error">
-  <p class="admonition-title">Error</p>
-  <p>
-    Please activate JavaScript to enable the search functionality.
-  </p>
-</div>
-</noscript>
+          <h1>Source code for ipyniivue.constants</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Provides classes for reusable, readable versions of important data.</span>
 
-<div id="search-results"></div>
+<span class="sd">This module uses enum to enumerate important constants.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;ColormapType&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DragMode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MultiplanarType&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PenType&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ShowRender&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SliceType&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="SliceType">
+<a class="viewcode-back" href="../../enums.html#ipyniivue.SliceType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SliceType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration of slice types for NiiVue instances.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    AXIAL : int</span>
+<span class="sd">        Axial slice type (value 0).</span>
+<span class="sd">    CORONAL : int</span>
+<span class="sd">        Coronal slice type (value 1).</span>
+<span class="sd">    SAGITTAL : int</span>
+<span class="sd">        Sagittal slice type (value 2).</span>
+<span class="sd">    MULTIPLANAR : int</span>
+<span class="sd">        Multiplanar view type (value 3).</span>
+<span class="sd">    RENDER : int</span>
+<span class="sd">        Render view type (value 4).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">AXIAL</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">CORONAL</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">SAGITTAL</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">MULTIPLANAR</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">RENDER</span> <span class="o">=</span> <span class="mi">4</span></div>
+
+
+
+<div class="viewcode-block" id="PenType">
+<a class="viewcode-back" href="../../enums.html#ipyniivue.PenType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PenType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration of pen types for drawing tools.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    PEN : int</span>
+<span class="sd">        Standard pen (freehand drawing) (value 0).</span>
+<span class="sd">    RECTANGLE : int</span>
+<span class="sd">        Rectangle drawing mode (value 1).</span>
+<span class="sd">    ELLIPSE : int</span>
+<span class="sd">        Ellipse drawing mode (value 2).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">PEN</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">RECTANGLE</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">ELLIPSE</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+
+<div class="viewcode-block" id="ShowRender">
+<a class="viewcode-back" href="../../enums.html#ipyniivue.ShowRender">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShowRender</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration for specifying when to show rendering in NiiVue instances.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    NEVER : int</span>
+<span class="sd">        Never show rendering (value 0).</span>
+<span class="sd">    ALWAYS : int</span>
+<span class="sd">        Always show rendering (value 1).</span>
+<span class="sd">    AUTO : int</span>
+<span class="sd">        Automatically determine whether to show rendering (value 2).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">NEVER</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ALWAYS</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">AUTO</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+
+<div class="viewcode-block" id="MultiplanarType">
+<a class="viewcode-back" href="../../enums.html#ipyniivue.MultiplanarType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MultiplanarType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration of multiplanar types for NiiVue instances.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    AUTO : int</span>
+<span class="sd">        Automatic multiplanar layout (value 0).</span>
+<span class="sd">    COLUMN : int</span>
+<span class="sd">        Vertical column multiplanar layout (value 1).</span>
+<span class="sd">    GRID : int</span>
+<span class="sd">        Grid multiplanar layout (value 2).</span>
+<span class="sd">    ROW : int</span>
+<span class="sd">        Horizontal row multiplanar layout (value 3).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">AUTO</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">COLUMN</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">GRID</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">ROW</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+
+<div class="viewcode-block" id="DragMode">
+<a class="viewcode-back" href="../../enums.html#ipyniivue.DragMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DragMode</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration of drag modes for NiiVue instances.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    NONE : int</span>
+<span class="sd">        No drag mode active (value 0).</span>
+<span class="sd">    CONTRAST : int</span>
+<span class="sd">        Contrast adjustment mode (value 1).</span>
+<span class="sd">    MEASUREMENT : int</span>
+<span class="sd">        Measurement mode for taking measurements (value 2).</span>
+<span class="sd">    PAN : int</span>
+<span class="sd">        Pan mode for moving around the image (value 3).</span>
+<span class="sd">    SLICER_3D : int</span>
+<span class="sd">        3D slicer interaction mode (value 4).</span>
+<span class="sd">    CALLBACK_ONLY : int</span>
+<span class="sd">        Callback only mode (value 5).</span>
+<span class="sd">    ROI_SELECTION : int</span>
+<span class="sd">        ROI (Region of Interest) selection mode (value 6).</span>
+<span class="sd">    ANGLE : int</span>
+<span class="sd">        Angle measurement mode (value 7).</span>
+<span class="sd">    CROSSHAIR : int</span>
+<span class="sd">        Crosshair interaction mode (value 8).</span>
+<span class="sd">    WINDOWING : int</span>
+<span class="sd">        Windowing adjustment mode (value 9).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">NONE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">CONTRAST</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">MEASUREMENT</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">PAN</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">SLICER_3D</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">CALLBACK_ONLY</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">ROI_SELECTION</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">ANGLE</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">CROSSHAIR</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">WINDOWING</span> <span class="o">=</span> <span class="mi">9</span></div>
+
+
+
+<div class="viewcode-block" id="ColormapType">
+<a class="viewcode-back" href="../../enums.html#ipyniivue.ColormapType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ColormapType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration of colormap types.</span>
+
+<span class="sd">    Members</span>
+<span class="sd">    -------</span>
+<span class="sd">    MIN_TO_MAX : int</span>
+<span class="sd">        Colormap spans from minimum to maximum values (value 0).</span>
+<span class="sd">    ZERO_TO_MAX_TRANSPARENT_BELOW_MIN : int</span>
+<span class="sd">        Colormap spans from zero to maximum, transparent below minimum (value 1).</span>
+<span class="sd">    ZERO_TO_MAX_TRANSLUCENT_BELOW_MIN : int</span>
+<span class="sd">        Colormap spans from zero to maximum, translucent below minimum (value 2).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">MIN_TO_MAX</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ZERO_TO_MAX_TRANSPARENT_BELOW_MIN</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">ZERO_TO_MAX_TRANSLUCENT_BELOW_MIN</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+
+<span class="n">_SNAKE_TO_CAMEL_OVERRIDES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;show_3d_crosshair&quot;</span><span class="p">:</span> <span class="s2">&quot;show3Dcrosshair&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mesh_thickness_on_2d&quot;</span><span class="p">:</span> <span class="s2">&quot;meshThicknessOn2D&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;yoke_3d_to_2d_zoom&quot;</span><span class="p">:</span> <span class="s2">&quot;yoke3Dto2DZoom&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;is_slice_mm&quot;</span><span class="p">:</span> <span class="s2">&quot;isSliceMM&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;limit_frames_4d&quot;</span><span class="p">:</span> <span class="s2">&quot;limitFrames4D&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;click_to_segment_is_2d&quot;</span><span class="p">:</span> <span class="s2">&quot;clickToSegmentIs2D&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;is_v1_slice_shader&quot;</span><span class="p">:</span> <span class="s2">&quot;isV1SliceShader&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;is_force_mouse_click_to_voxel_centers&quot;</span><span class="p">:</span> <span class="s2">&quot;isForceMouseClickToVoxelCenters&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mesh_xray&quot;</span><span class="p">:</span> <span class="s2">&quot;meshXRay&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;click_to_segment_max_distance_mm&quot;</span><span class="p">:</span> <span class="s2">&quot;clickToSegmentMaxDistanceMM&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;is_2d_slice_shader&quot;</span><span class="p">:</span> <span class="s2">&quot;is2DSliceShader&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
         </article>
       </div>
       <footer>
@@ -274,10 +456,10 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=20623aea"></script>
-    <script src="_static/doctools.js?v=9bcbadda"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+</div><script src="../../_static/documentation_options.js?v=20623aea"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"></script>
     <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
@@ -643,8 +825,5 @@ const load = async () => {
 
 window.addEventListener("load", load);
 </script>
-    
-<script src="_static/searchtools.js"></script>
-<script src="_static/language_data.js"></script>
-<script src="searchindex.js"></script></body>
+    </body>
 </html>
